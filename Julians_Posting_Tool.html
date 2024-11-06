@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julian's Posting Tool</title>
+
+    <!-- Favicon hinzufügen -->
+    <link rel="icon" href="https://www.rot-weiss-essen.de/wp-content/themes/RotWeissEssen/images/Rot-Weiss-Essen-Vereinslogo.png" type="image/png">
+
+    <style>
+        /* Grundfarben und Übergänge */
+        body, .container {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Sicherstellen, dass der Footer immer unten bleibt */
+            justify-content: flex-start; /* Der Container bleibt oben */
+            align-items: center; /* Container wird horizontal zentriert */
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 700px; /* Box-Breite */
+            text-align: center;
+            margin-top: 20px; /* Abstand vom oberen Rand */
+            flex-grow: 0; /* Box wächst nicht */
+            margin-bottom: 20px; /* Platz für den Footer */
+            overflow: hidden; /* Verhindert, dass der Inhalt außerhalb der Box geht */
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 img {
+            width: 30px; /* Größe des Logos */
+            margin-right: 10px; /* Abstand zwischen Logo und Titel */
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Zentriert die Buttons */
+            gap: 15px; /* Mehr Abstand zwischen den Buttons */
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #E1001E; /* Rot für Buttons */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button img {
+            width: 20px; /* Logo-Größe */
+            margin-right: 8px; /* Abstand zwischen Logo und Text */
+        }
+
+        button:hover {
+            background-color: #c1001a; /* Dunkleres Rot beim Hover */
+        }
+
+        #copyBtn {
+            margin-top: 10px;
+            background-color: #E1001E; /* Der rote "Text kopieren" Button */
+        }
+
+        #copyBtn:hover {
+            background-color: #c1001a;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-top: 20px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            padding: 10px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadeInOut 2s;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Ausgabe bleibt linksbündig */
+        #outputField {
+            text-align: left;
+        }
+
+        /* Darkmode Farben */
+        body.dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        body.dark-mode .container {
+            background-color: #444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode button {
+            background-color: #c1001a; /* Dunkleres Rot im Darkmode */
+        }
+
+        body.dark-mode button:hover {
+            background-color: #e1001e; /* Helleres Rot im Darkmode */
+        }
+
+        body.dark-mode h2 {
+            color: white; /* Helle Schrift für Darkmode */
+        }
+
+        /* Darkmode Button oben rechts */
+        #darkModeToggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #E1001E; /* Roter Hintergrund für den Button */
+            color: white;
+            border: none;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #darkModeToggle:hover {
+            background-color: #c1001a;
+        }
+
+        /* Footer Styles */
+        .footer {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f5f5f5; /* Standard Hintergrundfarbe */
+            color: #333; /* Standard Textfarbe */
+        }
+
+        .footer a {
+            color: #E1001E; /* Rot für Links */
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dark Mode Styles für Footer */
+        body.dark-mode .footer {
+            background-color: #333; /* Dunkler Hintergrund im Dark Mode */
+            color: #f5f5f5; /* Helle Textfarbe im Dark Mode */
+        }
+
+        body.dark-mode .footer a {
+            color: #f5f5f5; /* Helle Links im Dark Mode */
+        }
+
+        body.dark-mode .footer a:hover {
+            color: #E1001E; /* Rot bei Hover im Dark Mode */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Überschrift mit Logo -->
+        <h2>
+            <img src="https://www.rot-weiss-essen.de/wp-content/themes/RotWeissEssen/images/Rot-Weiss-Essen-Vereinslogo.png" alt="Logo">
+            Julian's Posting Tool
+        </h2>
+
+        <!-- Darkmode Toggle Button -->
+        <button id="darkModeToggle" onclick="toggleDarkMode()">🌙</button>
+
+        <!-- Eingabefeld -->
+        <textarea id="inputField" placeholder="Gib hier deinen Text ein..."></textarea>
+
+        <!-- Emoji Buttons -->
+        <div class="button-container">
+            <button onclick="insertEmoji('📲')">📲</button>
+            <button onclick="insertEmoji('ℹ️')">ℹ️</button>
+            <button onclick="insertEmoji('➡️')">➡️</button>
+            <button onclick="insertEmoji('👉')">👉</button>
+            <button onclick="insertEmoji('🔗')">🔗</button>
+            <button onclick="insertEmoji('🔴')">🔴</button>
+            <button onclick="insertEmoji('⚪')">⚪</button>
+        </div>
+
+        <div class="button-container">
+            <button id="instagramBtn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png" alt="Instagram Logo">
+                Instagram
+            </button>
+
+            <button id="twitterBtn">
+                <img src="https://abs.twimg.com/favicons/twitter.3.ico" alt="Twitter Logo">
+                Twitter
+            </button>
+        </div>
+
+        <!-- Ausgabe-Feld -->
+        <textarea id="outputField" readonly></textarea>
+
+        <!-- Kopier-Button -->
+        <button id="copyBtn">Text kopieren</button>
+
+        <!-- Toast-Nachricht -->
+        <div id="toast" class="toast">Text wurde kopiert!</div>
+    </div>
+
+    <div class="footer">
+        <a href="https://htmlpreview.github.io/?https://github.com/yungjulian/julians-tools/blob/main/Julians_Liveticker_Tool.html">Liveticker Tool</a>
+        <a href="https://htmlpreview.github.io/?https://github.com/yungjulian/julians-tools/blob/main/Julians_Posting_Tool.html">Posting Tool</a>
+        <a href="https://htmlpreview.github.io/?https://github.com/yungjulian/julians-tools/blob/main/Julians_Spielstand_Tool.html">Spielstand Tool</a>
+    </div>
+
+    <script>
+        // Funktion für Dark Mode Umschaltung
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const darkModeIcon = document.getElementById('darkModeToggle');
+            darkModeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Funktion zum Einfügen von Emojis in das Textfeld
+        function insertEmoji(emoji) {
+            const inputField = document.getElementById('inputField');
+            const cursorPos = inputField.selectionStart;
+            const textBefore = inputField.value.substring(0, cursorPos);
+            const textAfter = inputField.value.substring(cursorPos);
+            inputField.value = textBefore + emoji + textAfter;
+            inputField.focus();
+            inputField.selectionStart = cursorPos + emoji.length;
+            inputField.selectionEnd = cursorPos + emoji.length;
+        }
+
+        // Funktion zum Hinzufügen von Instagram-Hashtags
+        document.getElementById('instagramBtn').addEventListener('click', function() {
+            const inputText = document.getElementById('inputField').value;
+            const hashtags = '#rotweissessen #rwessen #rwe1907 #immeRWEiter #hafenstraße #nurderrwe';
+            document.getElementById('outputField').value = inputText + '\n\n' + hashtags;
+        });
+
+        // Funktion zum Hinzufügen von Twitter-Hashtags
+        document.getElementById('twitterBtn').addEventListener('click', function() {
+            const inputText = document.getElementById('inputField').value;
+            const hashtags = '#immeRWEiter #nurderrwe';
+            document.getElementById('outputField').value = inputText + '\n\n' + hashtags;
+        });
+
+        // Funktion zum Kopieren des Textes
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const outputText = document.getElementById('outputField').value;
+            if (outputText) {
+                navigator.clipboard.writeText(outputText)
+                    .then(function() {
+                        const toast = document.getElementById('toast');
+                        toast.classList.add('show');
+                        setTimeout(function() {
+                            toast.classList.remove('show');
+                        }, 2000); // Toast verschwindet nach 2 Sekunden
+                    })
+                    .catch(function(err) {
+                        console.error('Fehler beim Kopieren:', err);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
