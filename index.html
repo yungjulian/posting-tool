@@ -21,8 +21,8 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Der Container bleibt oben */
-            align-items: center; /* Container wird horizontal zentriert */
+            justify-content: flex-start;
+            align-items: center;
         }
 
         .container {
@@ -32,9 +32,9 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 700px; /* Box-Breite */
             text-align: center;
-            margin-top: 20px; /* Abstand vom oberen Rand */
-            flex-grow: 0; /* Box wächst nicht */
-            overflow: hidden; /* Verhindert, dass der Inhalt außerhalb der Box geht */
+            margin-top: 20px;
+            flex-grow: 0;
+            overflow: hidden;
             box-sizing: border-box;
         }
 
@@ -46,8 +46,8 @@
         }
 
         h2 img {
-            width: 30px; /* Größe des Logos */
-            margin-right: 10px; /* Abstand zwischen Logo und Titel */
+            width: 30px;
+            margin-right: 10px;
         }
 
         textarea {
@@ -68,13 +68,13 @@
         .button-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center; /* Zentriert die Buttons */
-            gap: 15px; /* Mehr Abstand zwischen den Buttons */
+            justify-content: center;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
         button {
-            background-color: #E1001E; /* Rot für Buttons */
+            background-color: #E1001E;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -88,17 +88,17 @@
         }
 
         button img {
-            width: 20px; /* Logo-Größe */
-            margin-right: 8px; /* Abstand zwischen Logo und Text */
+            width: 20px;
+            margin-right: 8px;
         }
 
         button:hover {
-            background-color: #c1001a; /* Dunkleres Rot beim Hover */
+            background-color: #c1001a;
         }
 
         #copyBtn {
             margin-top: 10px;
-            background-color: #E1001E; /* Der rote "Text kopieren" Button */
+            background-color: #E1001E;
         }
 
         #copyBtn:hover {
@@ -138,67 +138,47 @@
             text-align: left;
         }
 
-        /* Darkmode Farben */
-        body.dark-mode {
-            background-color: #333;
-            color: white;
-        }
+        /* Mobile Anpassungen */
+        @media only screen and (max-width: 768px) {
+            .container {
+                width: 90%; /* Container schmaler auf mobilen Geräten */
+                padding: 15px;
+            }
 
-        body.dark-mode .container {
-            background-color: #444;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
+            textarea {
+                height: 100px; /* Textarea wird kleiner */
+            }
 
-        body.dark-mode button {
-            background-color: #c1001a; /* Dunkleres Rot im Darkmode */
-        }
+            button {
+                font-size: 12px; /* Kleinere Buttons */
+                padding: 8px 16px;
+            }
 
-        body.dark-mode button:hover {
-            background-color: #e1001e; /* Helleres Rot im Darkmode */
-        }
+            #copyBtn {
+                width: 100%; /* "Text kopieren" Button nimmt volle Breite ein */
+            }
 
-        body.dark-mode h2 {
-            color: white; /* Helle Schrift für Darkmode */
+            /* Emoji Buttons auf mobilen Geräten ausblenden */
+            .emoji-buttons {
+                display: none;
+            }
         }
-
-        /* Darkmode Button oben rechts */
-        #darkModeToggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #E1001E; /* Roter Hintergrund für den Button */
-            color: white;
-            border: none;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #darkModeToggle:hover {
-            background-color: #c1001a;
-        }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Überschrift mit Logo -->
         <h2>
-        	<a href="https://yungjulian.github.io/julians-tools/">
-            		<img src="https://www.rot-weiss-essen.de/wp-content/themes/RotWeissEssen/images/Rot-Weiss-Essen-Vereinslogo.png" alt="Rot-Weiss Essen Logo">
-        	</a>
+            <a href="https://yungjulian.github.io/julians-tools/">
+                <img src="https://www.rot-weiss-essen.de/wp-content/themes/RotWeissEssen/images/Rot-Weiss-Essen-Vereinslogo.png" alt="Rot-Weiss Essen Logo">
+            </a>
             Julian's Posting Tool
         </h2>
-
-        <!-- Darkmode Toggle Button -->
-        <button id="darkModeToggle" onclick="toggleDarkMode()">🌙</button>
 
         <!-- Eingabefeld -->
         <textarea id="inputField" placeholder="Gib hier deinen Text ein..."></textarea>
 
-        <!-- Emoji Buttons -->
-        <div class="button-container">
+        <!-- Emoji Buttons (nur auf Desktop sichtbar) -->
+        <div class="button-container emoji-buttons">
             <button onclick="insertEmoji('📲')">📲</button>
             <button onclick="insertEmoji('ℹ️')">ℹ️</button>
             <button onclick="insertEmoji('➡️')">➡️</button>
@@ -231,13 +211,6 @@
     </div>
 
     <script>
-        // Funktion für Dark Mode Umschaltung
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const darkModeIcon = document.getElementById('darkModeToggle');
-            darkModeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        }
-
         // Funktion zum Einfügen von Emojis in das Textfeld
         function insertEmoji(emoji) {
             const inputField = document.getElementById('inputField');
